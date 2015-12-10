@@ -1,0 +1,70 @@
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background-color: #ffffff;
+}
+
+#pageWatch {
+    display: block;
+    overflow-y: hidden;
+}
+
+#pageCity {
+    display: none;
+}
+
+#selectTable {
+    margin: auto;
+    padding-bottom: 100px;
+}
+
+#footer {
+    position: fixed;
+    margin: auto;
+    bottom: 0px;
+    height: 90px;
+    width: 100%;
+    z-index: 100;
+}
+
+.footerButton {
+    display: inline-block;
+    float: left;
+    padding-top: 0.8em;
+    color: #ffffff;
+    background-color: #666666;
+    border-width: 0 1px 0 1px;
+    border-style: solid;
+    border-color: #ffffff;
+    width: 50%;
+    height: 100%;
+    font-size: 2em;
+    box-sizing: border-box;
+}
+
+#btnSave {
+    text-align: center;
+}
+
+#btnCancel {
+    text-align: center;
+}
+
+@media screen and (-tizen-geometric-shape: circle) {
+    #btnSave {
+        text-align: right;
+        text-indent: 7px;
+        direction: rtl;
+    }
+
+    #btnCancel {
+        text-align: left;
+        text-indent: 5px;
+    }
+}
