@@ -41,7 +41,8 @@ var TABLE_HEIGHT = 300,
     offsetY = ((document.body.clientHeight / 2) - (document.body.clientWidth / 2)),
     
 	user_longitude,
-	user_latitude;
+	user_latitude,
+	weather_image ='img/map.png'
 
 function setSize() {
     var pageWatch = document.getElementById('pageWatch'),
@@ -143,19 +144,23 @@ function checkSelectedCity() {
     }
 }
 
-function drawMap(weather) {
+function drawMap(w_image) {
 	var map = new Image();
 	
-	if (weather==1)  {
-		 map.src = 'img/galaxy.jpg' ;
+		 map.src = w_image ;
 		    context.drawImage(map, 0, offsetY, document.body.clientWidth,
 		        document.body.clientWidth);
-	} else
-		 map.src = 'img/map.png' ;
-			context.drawImage(map, 0, offsetY, document.body.clientWidth,
-					document.body.clientWidth);
 
-   
+
+}
+
+function updateImage(weather){
+	alert(weather);
+	if (weather == 1){
+		weather_image = 'img/galaxy.jpg'
+	}else{
+		weather_image = 'img/sky.jpg'
+	}
 }
 
 function drawCircle(x, y, radius, color) {
@@ -187,14 +192,13 @@ function drawWatchLayout() {
         dyi = 0,
         dxf = 0,
         dyf = 0,
-        angle = 0;    	
+        angle = 0;
+    	
 
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);    
     
     
-    
-    	drawMap(getWeather());
-    
+    drawMap(weather_image);
 
     context.beginPath();
     context.lineWidth = 2;
@@ -225,6 +229,7 @@ function drawWatchLayout() {
     context.lineTo(dxf, dyf);
     context.stroke();
     context.closePath();
+    
 }
 
 
@@ -286,30 +291,37 @@ function getWeather(){
 	lat=user_latitude;
 	long=user_longitude;
 	console.log("PRY",lat);
-	console.log(long);
+	console.log("S");
+	console.log("CYLA",  long);
 	
-	var temp = Get('http://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+long+'&APPID=d0f7ff959b61b2041decd8a55cc5ac5e');	
-	console.log(temp);
-	var json_objc = JSON.parse(temp);
-	weather = json_objc.weather[0].main;
-	console.log("tempo" ,weather);
+//	var temp = Get('http://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+long+'&APPID=d0f7ff959b61b2041decd8a55cc5ac5e');	
+//	var json_objc = JSON.parse(temp);
+//	weather = json_objc.weather[0].main;
+//	console.log("tempo" ,weather);
 	
-	
-//	console.log(temp);
-	
-//	return weather;//arrumar na funcao
+	var codeResponse = null;
+	$.get('http://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+long+'&APPID=d0f7ff959b61b2041decd8a55cc5ac5e',function(response){
+		console.log(response);
+		codeResponse = response.weather[0].id;
+		updateImage(codeResponse);
+	});
+	return 1;//arrumar na funcao
 	
 }
-
 
 function onScreenStateChanged(previousState, changedState) {
 	if(tizen.power.isScreenOn()){
 		console.log("on");
+//		updateImage(getWeather());
 	}
 	else{
 	console.log("off");
 	}
 }
+
+
+
+
 
 
 function drawWatchContentCity(hour, minute, color, mapX, mapY) {
@@ -424,19 +436,11 @@ function appInit() {
     setInterval(function() {
         drawWatch();
     }, 500);
-
     
+   
+      
 
     // eventListener
-    document.getElementById('myCanvas').addEventListener('touchstart', function(ev) {
-        var touchList = null;
-
-        touchList = ev.touches;
-
-        if (touchList.length === 2) {
-            displayCity();
-        }
-    });
     
     tizen.power.setScreenStateChangeListener(onScreenStateChanged);
 
@@ -449,13 +453,42 @@ function appInit() {
         displayWatch();
         drawWatch();
     });
+    
+    
+    document.getElementById('myCanvas').addEventListener('touchstart', function(ev) {
+        var touchList = null;
+
+        touchList = ev.touches;
+
+        if (touchList.length === 2) {
+            displayCity();
+        }
+    });
+
+    document.getElementById('btnSave').addEventListener('click', function() {
+        var i = 0;
+
+        for (i = 0; i < colorCity.length; i++) {
+            localStorage.setItem(colorCity[i].colorCode, colorCity[i].cityId);
+        }
+        displayWatch();
+        drawWatch();
+    });
+    
+    $('body').click(function(event){
+    	getWeather();
+    })
 
     document.getElementById('btnCancel').addEventListener('click', function() {
         setColorCity();
         displayWatch();
         drawWatch();
     });
+    
+    
 }
+
+
 
 window.onload = function() {
     appInit();
@@ -466,7 +499,6 @@ window.onload = function() {
             if (document.getElementById('pageCity').style.display === 'block') {
                 setColorCity();
                 displayWatch();
-                
             } else {
                 try {
                     tizen.application.getCurrentApplication().exit();
