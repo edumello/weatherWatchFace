@@ -1,33 +1,25 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta name="description" content="World Clock - Canvas API & Time API Tutorial" />
-    <title>World Clock</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
-    <link rel="lib/jquery.mobile-1.4.5.min.css"  type="text/css" href="css/style.css"  />
+    <meta name="description" content="Digital Watch Application"/>
+    <title>Digital Watch</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
     
 </head>
 
 <body>
-    <div data-role="page" id="pageWatch">
-        <canvas id="myCanvas"></canvas>
+	<div id="tudo">
+		<canvas id="myCanvas" width="360" height="360"></canvas>
+	</div>
+    <div id='rec_time'>
+        <div id='str_hours' class="texto"></div>
+        <div id='str_console' class="texto">:</div>
+        <div id='str_minutes' class="texto"></div>
     </div>
-    <div data-role="page" id="pageCity">
-        <div id="selectTable">
-        </div>
-        <div id="footer">
-            <div class="footerButton" id="btnSave">Save</div>
-            <div class="footerButton" id="btnCancel">Cancel</div>
-        </div>
-    </div>
-    <script src="lib/jquery-2.1.4.min.js"></script>
-    <script src="lib/jquery.mobile-1.4.5.min.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/data.js"></script>
+    <div id="str_temp"></div>
 </body>
-
+<script src="lib/jquery-2.1.4.min.js"></script>
+<script src="js/main.js"></script>
 </html>
-

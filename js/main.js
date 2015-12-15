@@ -12,224 +12,46 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
  */
+var flagConsole = false;
+var weather_image = "img/dia1.jpg";
+var context;
+var circleCtx;
+var canvas;
+var user_longitude;
+var user_latitude;
+var temperaturaAtual = 0;
+var offsetY = ((document.body.clientHeight / 2) - (document.body.clientWidth / 2));
+var background_image = "img/neve3_360.png";
+var background = [];
+background["01d"] = "img/neve3_360.jpg";
+background["02d"] = "img/dia1.jpg";
+background["03d"] = "img/dia1.jpg";
+background["04d"] = "img/dia1.jpg";
+background["09d"] = "img/dia1.jpg";
+background["10d"] = "img/dia1.jpg";
+background["11d"] = "img/dia1.jpg";
+background["13d"] = "img/dia1.jpg";
+background["50d"] = "img/dia1.jpg";
+background["01n"] = "img/dia1.jpg";
+background["02n"] = "img/dia1.jpg";
+background["03n"] = "img/dia1.jpg";
+background["04n"] = "img/dia1.jpg";
+background["09n"] = "img/dia1.jpg";
+background["10n"] = "img/dia1.jpg";
+background["11n"] = "img/dia1.jpg";
+background["13n"] = "img/dia1.jpg";
+background["50n"] = "img/dia1.jpg";
 
+function getDate(date) {
+    var str_month = document.getElementById('str_month'),
+        month = date.getMonth() + 1,
+        day = date.getDate();
 
-
-var TABLE_HEIGHT = 300,
-    CIRCLE_RADIUS_CENTER = 6,
-    CIRCLE_RADIUS_CITY = 2.5,
-    CIRCLE_RADIUS_AROUND = 1.5,
-    NEEDLE_LENGTH_HOUR = 0.65,
-    NEEDLE_LENGTH_MINUTE = 0.8,
-    NEEDLE_LENGTH_SECOND = 0.8,
-    NEEDLE_WIDTH_HOUR = 4,
-    NEEDLE_WIDTH_MINUTE = 2,
-    NEEDLE_WIDTH_SECOND = 2,
-    LOCAION_AROUND_CIRCLE = 0.9,
-    LOCATION_AROUND_LINE_START = 0.82,
-    LOCATION_AROUND_LINE_END = 0.92,
-    cityArray = null,
-    colorCity = null,
-    canvas = null,
-    context = null,
-    circleCtx = null,
-    centerX = document.body.clientWidth / 2,
-    centerY = document.body.clientHeight / 2,
-    watchRadius = document.body.clientWidth / 2,
-    offsetY = ((document.body.clientHeight / 2) - (document.body.clientWidth / 2)),
-    
-	user_longitude,
-	user_latitude,
-	weather_image ='img/map.png'
-
-function setSize() {
-    var pageWatch = document.getElementById('pageWatch'),
-        divTable = document.getElementById('selectTable');
-    pageWatch.style.width = document.body.clientWidth + 'px';
-    pageWatch.style.height = document.body.clientHeight + 'px';
-    divTable.style.paddingTop = (centerY - (TABLE_HEIGHT / 2)) + 'px';
-}
-
-function checkColorCity() {
-    var i = 0;
-
-    for (i = 0; i < colorCity.length; i++) {
-        if (localStorage.getItem(colorCity[i].colorCode) === null) {
-            localStorage.setItem(colorCity[i].colorCode, 0);
-        }
+    if(day < 10){
+        day = "0" + day;
     }
-}
-
-function setColorCity() {
-    var i = 0;
-
-    for (i = 0; i < colorCity.length; i++) {
-        colorCity[i].cityId = localStorage.getItem(colorCity[i].colorCode);
-    }
-}
-
-function addSelectTable() {
-    var i = 0,
-        j = 0,
-        div = null,
-        canvas = null,
-        select = null,
-        option = null,
-        divTable = document.getElementById('selectTable'),
-        optionFragment = document.createDocumentFragment(),
-        selectFragment = document.createDocumentFragment(),
-        divFragment = document.createDocumentFragment();
-
-    for (i = 0; i < colorCity.length; i++) {
-        div = document.createElement('div');
-        div.setAttribute('align', 'center');
-        canvas = document.createElement('canvas');
-        canvas.id = 'color-' + i;
-        canvas.style.verticalAlign = 'middle';
-        canvas.style.backgroundColor = '#' + colorCity[i].colorCode;
-        canvas.style.marginRight = '5px';
-        canvas.width = 40;
-        canvas.height = 40;
-        select = document.createElement('select');
-        select.className = 'selectCity';
-        select.id = 'colorCity-' + i;
-        select.style.fontSize = '2em';
-        select.style.verticalAlign = 'middle';
-        for (j = 0; j < cityArray.length; j++) {
-            option = document.createElement('option');
-            option.text = cityArray[j].cityName;
-            option.value = j;
-            optionFragment.appendChild(option);
-        }
-        select.appendChild(optionFragment);
-        selectFragment.appendChild(canvas);
-        selectFragment.appendChild(select);
-        div.appendChild(selectFragment);
-        divFragment.appendChild(div);
-    }
-    divTable.appendChild(divFragment);
-}
-
-function getSelectCity(event) {
-    var j = 0,
-        flag = 0,
-        colorId = 0,
-        cityId = 0,
-        thisCity = event.target;
-
-    colorId = thisCity.id.replace('colorCity-', '');
-    cityId = thisCity.value;
-    flag = 0;
-
-    for (j = 0; j < colorCity.length; j++) {
-        if (cityId !== "0" && cityId === colorCity[j].cityId) {
-            flag = 1;
-        }
-    }
-    if (flag === 1) {
-        alert("City Already Selected!");
-        thisCity.value = colorCity[colorId].cityId;
-    } else if (flag === 0) {
-        colorCity[colorId].cityId = thisCity.value;
-    }
-}
-
-function checkSelectedCity() {
-    var i = 0;
-
-    for (i = 0; i < colorCity.length; i++) {
-        document.getElementsByClassName('selectCity')[i].addEventListener('change', getSelectCity);
-    }
-}
-
-function drawMap(w_image) {
-	var map = new Image();
-	
-		 map.src = w_image ;
-		    context.drawImage(map, 0, offsetY, document.body.clientWidth,
-		        document.body.clientWidth);
-
-
-}
-
-function updateImage(weather){
-	alert(weather);
-	if (weather == 1){
-		weather_image = 'img/galaxy.jpg'
-	}else{
-		weather_image = 'img/sky.jpg'
-	}
-}
-
-function drawCircle(x, y, radius, color) {
-    circleCtx.beginPath();
-    circleCtx.fillStyle = color;
-    circleCtx.arc(x, y, radius, 0, 2 * Math.PI);
-    circleCtx.fill();
-    circleCtx.closePath();
-}
-
-function drawNeedle(angle, length, width, color) {
-    var dxi = 0,
-        dyi = 0,
-        dxf = watchRadius * Math.cos(angle) * length,
-        dyf = watchRadius * Math.sin(angle) * length;
-
-    context.beginPath();
-    context.lineWidth = width;
-    context.strokeStyle = color;
-    context.moveTo(centerX + dxi, centerY + dyi);
-    context.lineTo(centerX + dxf, centerY + dyf);
-    context.stroke();
-    context.closePath();
-}
-
-function drawWatchLayout() {
-    var i = 0,
-        dxi = 0,
-        dyi = 0,
-        dxf = 0,
-        dyf = 0,
-        angle = 0;
-    	
-
-    context.clearRect(0, 0, context.canvas.width, context.canvas.height);    
-    
-    
-    drawMap(weather_image);
-
-    context.beginPath();
-    context.lineWidth = 2;
-    context.strokeStyle = '#454545';
-
-    // circle markers from 1 to 11 o'clock
-    for (i = 1; i <= 11; i++) {
-        angle = (i - 3) * (Math.PI * 2) / 12;
-        dxf = centerX + (watchRadius * LOCAION_AROUND_CIRCLE) * Math.cos(angle);
-        dyf = centerY + (watchRadius * LOCAION_AROUND_CIRCLE) * Math.sin(angle);
-        drawCircle(dxf, dyf, CIRCLE_RADIUS_AROUND, '#454545');
-    }
-
-    context.closePath();
-
-    // line marker on 12 o'clock
-    context.beginPath();
-    context.lineWidth = 3;
-    context.strokeStyle = '#454545';
-
-    // 9 = (12-3) for calculating the angle at 12 o'clock
-    angle = 9 * (Math.PI * 2) / 12;
-    dxi = centerX + (watchRadius * LOCATION_AROUND_LINE_START) * Math.cos(angle);
-    dyi = centerY + (watchRadius * LOCATION_AROUND_LINE_START) * Math.sin(angle);
-    dxf = centerX + (watchRadius * LOCATION_AROUND_LINE_END) * Math.cos(angle);
-    dyf = centerY + (watchRadius * LOCATION_AROUND_LINE_END) * Math.sin(angle);
-    context.moveTo(dxi, dyi);
-    context.lineTo(dxf, dyf);
-    context.stroke();
-    context.closePath();
-    
+    str_month.innerHTML = month + "-" + day;
 }
 
 
@@ -274,15 +96,21 @@ function oneShotFunc()
    }
 }
 
+function drawMap(w_image) {
+	var map = new Image();
+	
+		 map.src = w_image ;
+		    context.drawImage(map, 0, offsetY, document.body.clientWidth,
+		        document.body.clientWidth);
+}
 
+function updateImage(weather){
+	background_image = background[weather];
+}
 
-function Get(yourUrl){
-	var Httpreq = new XMLHttpRequest(); // a new request
-	Httpreq.open("GET",yourUrl,false);
-	Httpreq.send(null);
-	return Httpreq.responseText;          
-
-	    }
+function updateTemp(temp){
+	temperaturaAtual = temp;
+}
 
 
 
@@ -290,20 +118,15 @@ function getWeather(){
 	oneShotFunc();
 	lat=user_latitude;
 	long=user_longitude;
-	console.log("PRY",lat);
-	console.log("S");
-	console.log("CYLA",  long);
-	
-//	var temp = Get('http://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+long+'&APPID=d0f7ff959b61b2041decd8a55cc5ac5e');	
-//	var json_objc = JSON.parse(temp);
-//	weather = json_objc.weather[0].main;
-//	console.log("tempo" ,weather);
 	
 	var codeResponse = null;
 	$.get('http://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+long+'&APPID=d0f7ff959b61b2041decd8a55cc5ac5e',function(response){
 		console.log(response);
-		codeResponse = response.weather[0].id;
+		var codeResponse = response.weather[0].icon;
 		updateImage(codeResponse);
+		var tempAtual = response.main.temp;
+		tempAtual = +(Math.round((tempAtual - 273) + "e+1")  + "e-1");
+		updateTemp(tempAtual);
 	});
 	return 1;//arrumar na funcao
 	
@@ -319,193 +142,60 @@ function onScreenStateChanged(previousState, changedState) {
 	}
 }
 
-
-
-
-
-
-function drawWatchContentCity(hour, minute, color, mapX, mapY) {
-    var hourNeedleAngle = Math.PI * (((hour + minute / 60) / 6) - 0.5);
-
-    // Draw the marker on the map
-    drawCircle(centerX + mapX, centerY + mapY, CIRCLE_RADIUS_CITY, color);
-    context.shadowBlur = 5;
-    context.shadowOffsetX = 1;
-    context.shadowOffsetY = 1;
-
-    // Draw the hour needle
-    context.shadowColor = '#454545';
-    context.shadowBlur = 10;
-    context.shadowOffsetX = 2;
-    context.shadowOffsetY = 2;
-
-    drawNeedle(hourNeedleAngle, NEEDLE_LENGTH_HOUR, NEEDLE_WIDTH_HOUR, color);
-
-    context.shadowBlur = 0;
-    context.shadowOffsetX = 0;
-    context.shadowOffsetY = 0;
-
-    // Draw the center circle
-    drawCircle(centerX, centerY, CIRCLE_RADIUS_CENTER, '#454545');
-    context.shadowBlur = 0;
-    context.shadowOffsetX = 0;
-    context.shadowOffsetY = 0;
-}
-
-function drawWatchContentDefault(hour, minute, second, mapX, mapY) {
-    var minuteNeedleAngle = Math.PI * (((minute + second / 60) / 30) - 0.5),
-        secondNeedleAngle = Math.PI * ((second / 30) - 0.5);
-
-    context.shadowBlur = 5;
-    context.shadowOffsetX = 1;
-    context.shadowOffsetY = 1;
-
-    // Draw the minute needle
-    drawNeedle(minuteNeedleAngle, NEEDLE_LENGTH_MINUTE, NEEDLE_WIDTH_MINUTE, '#454545');
-
-    // Draw the second needle
-    drawNeedle(secondNeedleAngle, NEEDLE_LENGTH_SECOND, NEEDLE_WIDTH_SECOND, '#c7c7c7');
-
-    // Draw the hour needle
-    drawWatchContentCity(hour, minute, '#454545', mapX, mapY);
-}
-
-function drawWatch() {
-    var i = 0,
-        date = null,
-        hour = null,
-        minute = null,
-        second = null;
-
-    try {
+function getTime() {
+    var str_hours = document.getElementById('str_hours'),
+        str_console = document.getElementById('str_console'),
+        str_minutes = document.getElementById('str_minutes'),
+        str_temp = document.getElementById('str_temp'),
+        
         date = tizen.time.getCurrentDateTime();
-        hour = date.getHours();
-        minute = date.getMinutes();
-        second = date.getSeconds();
-    } catch (error) {
-        console.error("getCurrentDateTime(): " + error.message);
+
+    str_hours.innerHTML = date.getHours();
+    str_minutes.innerHTML = date.getMinutes();
+    str_temp.innerHTML = temperaturaAtual + "°C";
+    
+    if (date.getHours() < 10) {
+        str_hours.innerHTML = "0" + date.getHours();
     }
+    if (date.getMinutes() < 10) {
+        str_minutes.innerHTML = "0" + date.getMinutes();
+    }
+    drawMap(background["01d"]);
 
-    drawWatchLayout();
-    drawWatchContentDefault(hour, minute, second, 0, 0);
 
-    try {
-        for (i = 0; i < colorCity.length; i++) {
-            if (cityArray[colorCity[i].cityId].tzid !== 'NONE') {
-                hour = tizen.time.getCurrentDateTime().toTimezone(
-                    cityArray[colorCity[i].cityId].tzid).getHours();
-                drawWatchContentCity(hour, minute, colorCity[i].colorCode,
-                    cityArray[colorCity[i].cityId].mapX * (document.body.clientWidth / 360),
-                    cityArray[colorCity[i].cityId].mapY * (document.body.clientWidth / 360));
-            }
-        }
-    } catch (error) {
-        console.error("getCurrentDateTime(): " + error.message);
+    if (flagConsole) {
+        str_console.style.visibility = 'visible';
+        flagConsole = false;
+    } else {
+        str_console.style.visibility = 'hidden';
+        flagConsole = true;
     }
 }
 
-function displayWatch() {
-    document.getElementById('pageWatch').style.display = 'block';
-    document.getElementById('pageCity').style.display = 'none';
+function initDigitalWatch() {
+    setInterval(getTime, 500);
 }
-
-function displayCity() {
-    var i = 0;
-
-    for (i = 0; i < colorCity.length; i++) {
-        document.getElementsByClassName('selectCity')[i].value = colorCity[i].cityId;
-    }
-
-    document.getElementById('pageWatch').style.display = 'none';
-    document.getElementById('pageCity').style.display = 'block';
-}
-
-function appInit() {
-    setSize();
-    checkColorCity();
-    setColorCity();
-    addSelectTable();
-    checkSelectedCity();
-
-    canvas = document.getElementById('myCanvas');
-    context = canvas.getContext('2d');
-    circleCtx = canvas.getContext('2d');
-    canvas.width = document.body.clientWidth;
-    canvas.height = document.body.clientHeight;
-
-    setInterval(function() {
-        drawWatch();
-    }, 500);
-    
-   
-      
-
-    // eventListener
-    
-    tizen.power.setScreenStateChangeListener(onScreenStateChanged);
-
-    document.getElementById('btnSave').addEventListener('click', function() {
-        var i = 0;
-
-        for (i = 0; i < colorCity.length; i++) {
-            localStorage.setItem(colorCity[i].colorCode, colorCity[i].cityId);
-        }
-        displayWatch();
-        drawWatch();
-    });
-    
-    
-    document.getElementById('myCanvas').addEventListener('touchstart', function(ev) {
-        var touchList = null;
-
-        touchList = ev.touches;
-
-        if (touchList.length === 2) {
-            displayCity();
-        }
-    });
-
-    document.getElementById('btnSave').addEventListener('click', function() {
-        var i = 0;
-
-        for (i = 0; i < colorCity.length; i++) {
-            localStorage.setItem(colorCity[i].colorCode, colorCity[i].cityId);
-        }
-        displayWatch();
-        drawWatch();
-    });
-    
-    $('body').click(function(event){
-    	getWeather();
-    })
-
-    document.getElementById('btnCancel').addEventListener('click', function() {
-        setColorCity();
-        displayWatch();
-        drawWatch();
-    });
-    
-    
-}
-
 
 
 window.onload = function() {
-    appInit();
-
-    // add eventListener for tizenhwkey
-    window.addEventListener('tizenhwkey', function(e) {
-        if (e.keyName === 'back') {
-            if (document.getElementById('pageCity').style.display === 'block') {
-                setColorCity();
-                displayWatch();
-            } else {
-                try {
-                    tizen.application.getCurrentApplication().exit();
-                } catch (error) {
-                    console.error("getCurrentApplication(): " + error.message);
-                }
-            }
+	canvas = document.getElementById('myCanvas');
+    context = canvas.getContext('2d');
+    circleCtx = canvas.getContext('2d');
+    canvas.width = 360;
+    canvas.height = 360;
+	
+	$('body').click(function(event){
+    	getWeather();
+    })
+    //tizen.power.setScreenStateChangeListener(onScreenStateChanged);
+    document.addEventListener('tizenhwkey', function(e) {
+        if (e.keyName === "back") {
+            try {
+                tizen.application.getCurrentApplication().exit();
+            } catch (ignore) {}
         }
     });
+
+    initDigitalWatch();
+    
 };

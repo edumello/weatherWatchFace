@@ -1,70 +1,60 @@
-html {
-    width: 100%;
-    height: 100%;
+@font-face{
+    font-family: "My-Font";
+    src: url('BreezeSans-ThinCondensed.ttf')  format('truetype');
 }
 
 body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    background-color: #ffffff;
+    width: 360px;
+    height: 360px;
+    background-color: black;
+    margin: 0px!important;
 }
 
-#pageWatch {
-    display: block;
-    overflow-y: hidden;
+.texto{
+	color: #ffffff;
+	top:45%;
+    padding-top: 1%;
+    text-align:left;
+    display:inline-block;
+    font: 450% My-Font!important;
 }
 
-#pageCity {
-    display: none;
+#tudo{
+	display:block;
+	overflow-y: hidden;
+	height :360px;
+	width: 360px;
+}
+#str_temp{
+	position:absolute;
+	left:45%;
+	color: #ffffff;
+	top:70%;
+    padding-top: 1%;
+    text-align:left;
+    display:inline-block;
+    font: 200% My-Font!important;
 }
 
-#selectTable {
-    margin: auto;
-    padding-bottom: 100px;
-}
-
-#footer {
-    position: fixed;
-    margin: auto;
-    bottom: 0px;
-    height: 90px;
-    width: 100%;
-    z-index: 100;
-}
-
-.footerButton {
-    display: inline-block;
-    float: left;
-    padding-top: 0.8em;
-    color: #ffffff;
-    background-color: #666666;
-    border-width: 0 1px 0 1px;
-    border-style: solid;
-    border-color: #ffffff;
-    width: 50%;
-    height: 100%;
-    font-size: 2em;
-    box-sizing: border-box;
-}
-
-#btnSave {
-    text-align: center;
-}
-
-#btnCancel {
-    text-align: center;
+#rec_time{
+	width:80%;
+	position:fixed;
+	top:30%;
+	left:1%;
+	text-align:center;
 }
 
 @media screen and (-tizen-geometric-shape: circle) {
-    #btnSave {
-        text-align: right;
-        text-indent: 7px;
-        direction: rtl;
+    #rec_time {
+        height: 35%;
     }
-
-    #btnCancel {
-        text-align: left;
-        text-indent: 5px;
+    #str_day {
+        padding-left: 30%;
+    }
+    #str_hours {
+        padding-left: 20%;
+    }
+    #str_second {
+        padding-top: 6%;
     }
 }
