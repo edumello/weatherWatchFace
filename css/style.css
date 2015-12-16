@@ -1,6 +1,6 @@
 @font-face{
     font-family: "My-Font";
-    src: url('BreezeSans-ThinCondensed.ttf')  format('truetype');
+    src: url('BreezeSans-RegularCondensed.ttf')  format('truetype');
 }
 
 body {
@@ -27,13 +27,26 @@ body {
 }
 #str_temp{
 	position:absolute;
-	left:45%;
+	left:38%;
 	color: #ffffff;
-	top:70%;
+	top:65%;
     padding-top: 1%;
-    text-align:left;
+    text-align:center;
     display:inline-block;
     font: 200% My-Font!important;
+}
+#temp{
+	position:absolute;
+	left:38%;
+	top:65%;
+    padding-top: 1%;
+    text-align:left;
+    background-image:url("../img/thermometer49.png");
+}
+
+#str_console{
+	position:relative;
+	top:-4px;
 }
 
 #rec_time{

@@ -13,35 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var flagConsole = false;
-var weather_image = "img/dia1.jpg";
-var context;
-var circleCtx;
-var canvas;
-var user_longitude;
-var user_latitude;
-var temperaturaAtual = 0;
-var offsetY = ((document.body.clientHeight / 2) - (document.body.clientWidth / 2));
-var background_image = "img/neve3_360.png";
-var background = [];
-background["01d"] = "img/neve3_360.jpg";
-background["02d"] = "img/dia1.jpg";
-background["03d"] = "img/dia1.jpg";
-background["04d"] = "img/dia1.jpg";
-background["09d"] = "img/dia1.jpg";
-background["10d"] = "img/dia1.jpg";
-background["11d"] = "img/dia1.jpg";
-background["13d"] = "img/dia1.jpg";
-background["50d"] = "img/dia1.jpg";
-background["01n"] = "img/dia1.jpg";
-background["02n"] = "img/dia1.jpg";
-background["03n"] = "img/dia1.jpg";
-background["04n"] = "img/dia1.jpg";
-background["09n"] = "img/dia1.jpg";
-background["10n"] = "img/dia1.jpg";
-background["11n"] = "img/dia1.jpg";
-background["13n"] = "img/dia1.jpg";
-background["50n"] = "img/dia1.jpg";
+var flagConsole = false,
+	context,
+	circleCtx,
+	canvas,
+	user_longitude,
+	user_latitude,
+	temperaturaAtual = 0,
+	offsetY = ((document.body.clientHeight / 2) - (document.body.clientWidth / 2)),
+	background_image = "img/sun.jpg",
+	background = [];
+background["01d"] = "img/sun.jpg";
+background["02d"] = "img/sol.png";
+background["03d"] = "img/sol.png";
+background["04d"] = "img/nublado.png";
+background["09d"] = "img/360x360.png";
+background["10d"] = "img/360x360.png";
+background["11d"] = "img/raios3.png";
+background["13d"] = "img/neve3.jpg";
+background["50d"] = "img/nevoa.png";
+background["01n"] = "img/noite1.jpg";
+background["02n"] = "img/3noite.jpg";
+background["03n"] = "img/3noite.jpg";
+background["04n"] = "img/moon_nublado.jpg";
+background["09n"] = "img/night_rain.jpg";
+background["10n"] = "img/night_rain.png";
+background["11n"] = "img/raios2.png";
+background["13n"] = "img/neve1.jpg";
+background["50n"] = "img/nevoa2.png";
 
 function getDate(date) {
     var str_month = document.getElementById('str_month'),
@@ -57,7 +56,7 @@ function getDate(date) {
 
 function successCallback(position) 
 {
-   user_latitude = position.coords.latitude
+   user_latitude = position.coords.latitude;
    user_longitude = position.coords.longitude;
 }
 
@@ -116,29 +115,27 @@ function updateTemp(temp){
 
 function getWeather(){
 	oneShotFunc();
-	lat=user_latitude;
-	long=user_longitude;
-	
-	var codeResponse = null;
+	var lat = user_latitude,
+		long = user_longitude,
+		codeResponse = null,
+		tempAtual = null;
 	$.get('http://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+long+'&APPID=d0f7ff959b61b2041decd8a55cc5ac5e',function(response){
-		console.log(response);
-		var codeResponse = response.weather[0].icon;
-		updateImage(codeResponse);
-		var tempAtual = response.main.temp;
-		tempAtual = +(Math.round((tempAtual - 273) + "e+1")  + "e-1");
-		updateTemp(tempAtual);
+		try{
+			codeResponse = response.weather[0].icon;
+			tempAtual = response.main.temp;
+			tempAtual = +(Math.round((tempAtual - 273) + "e+0")  + "e-0");
+			updateImage(codeResponse);
+			updateTemp(tempAtual);
+		}
+		catch(ignore){
+			
+		}	
 	});
-	return 1;//arrumar na funcao
-	
 }
 
-function onScreenStateChanged(previousState, changedState) {
+function onScreenStateChanged() {
 	if(tizen.power.isScreenOn()){
-		console.log("on");
-//		updateImage(getWeather());
-	}
-	else{
-	console.log("off");
+		getWeather();
 	}
 }
 
@@ -152,6 +149,7 @@ function getTime() {
 
     str_hours.innerHTML = date.getHours();
     str_minutes.innerHTML = date.getMinutes();
+    //str_temp.innerHTML = 20 + "°C";
     str_temp.innerHTML = temperaturaAtual + "°C";
     
     if (date.getHours() < 10) {
@@ -160,7 +158,7 @@ function getTime() {
     if (date.getMinutes() < 10) {
         str_minutes.innerHTML = "0" + date.getMinutes();
     }
-    drawMap(background["01d"]);
+    drawMap(background_image);
 
 
     if (flagConsole) {
@@ -184,10 +182,7 @@ window.onload = function() {
     canvas.width = 360;
     canvas.height = 360;
 	
-	$('body').click(function(event){
-    	getWeather();
-    })
-    //tizen.power.setScreenStateChangeListener(onScreenStateChanged);
+    tizen.power.setScreenStateChangeListener(onScreenStateChanged);
     document.addEventListener('tizenhwkey', function(e) {
         if (e.keyName === "back") {
             try {
