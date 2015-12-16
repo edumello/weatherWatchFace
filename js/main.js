@@ -21,9 +21,9 @@ var flagConsole = false,
 	user_latitude,
 	temperaturaAtual = 0,
 	offsetY = ((document.body.clientHeight / 2) - (document.body.clientWidth / 2)),
-	background_image = "img/sun.jpg",
+	background_image = "img/sun.png",
 	background = [];
-background["01d"] = "img/sun.jpg";
+background["01d"] = "img/sun.png";
 background["02d"] = "img/sol.png";
 background["03d"] = "img/sol.png";
 background["04d"] = "img/nublado.png";
@@ -97,10 +97,14 @@ function oneShotFunc()
 
 function drawMap(w_image) {
 	var map = new Image();
-	
+	try{
 		 map.src = w_image ;
 		    context.drawImage(map, 0, offsetY, document.body.clientWidth,
 		        document.body.clientWidth);
+	}
+	catch(ignore){
+		
+	}
 }
 
 function updateImage(weather){
