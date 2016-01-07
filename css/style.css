@@ -25,23 +25,16 @@ body {
 	height :360px;
 	width: 360px;
 }
+
 #str_temp{
 	position:absolute;
-	left:38%;
+	left:42%;
 	color: #ffffff;
 	top:65%;
     padding-top: 1%;
     text-align:center;
     display:inline-block;
     font: 200% My-Font!important;
-}
-#temp{
-	position:absolute;
-	left:38%;
-	top:65%;
-    padding-top: 1%;
-    text-align:left;
-    background-image:url("../img/thermometer49.png");
 }
 
 #str_console{
@@ -55,6 +48,18 @@ body {
 	top:30%;
 	left:1%;
 	text-align:center;
+}
+
+#str_AMPM{
+	color: #ffffff;
+    font: 200% My-Font!important;
+    position:absolute;
+    top:30%;
+    left:92%;
+}
+
+.hide{
+	visibility: hidden;
 }
 
 @media screen and (-tizen-geometric-shape: circle) {

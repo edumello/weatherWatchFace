@@ -20,6 +20,10 @@ var flagConsole = false,
 	user_longitude,
 	user_latitude,
 	temperaturaAtual = 0,
+	temperaturaKevin = 273,
+	tipoTemperatura = "c",
+	ampm = "AM",
+	tipoHora = 24,
 	offsetY = ((document.body.clientHeight / 2) - (document.body.clientWidth / 2)),
 	background_image = "img/sun.png",
 	background = [];
@@ -41,18 +45,6 @@ background["10n"] = "img/night_rain.png";
 background["11n"] = "img/raios2.png";
 background["13n"] = "img/neve1.jpg";
 background["50n"] = "img/nevoa2.png";
-
-function getDate(date) {
-    var str_month = document.getElementById('str_month'),
-        month = date.getMonth() + 1,
-        day = date.getDate();
-
-    if(day < 10){
-        day = "0" + day;
-    }
-    str_month.innerHTML = month + "-" + day;
-}
-
 
 function successCallback(position) 
 {
@@ -111,28 +103,39 @@ function updateImage(weather){
 	background_image = background[weather];
 }
 
-function updateTemp(temp){
-	temperaturaAtual = temp;
+function updateTemp(tempAtual){
+	if (tipoTemperatura == "c"){
+		tempAtual = +(Math.round((tempAtual - 273) + "e+0")  + "e-0");
+		temperaturaAtual = tempAtual + "°C";
+	}
+	else{
+		tempAtual = +(Math.round((((tempAtual - 273.15) * 1.8) + 32) + "e+0")  + "e-0");
+		temperaturaAtual = tempAtual + "°F";
+	}
+	return temperaturaAtual;
 }
 
-
+function trocarTemp(){
+	if (tipoTemperatura == "c"){
+		tipoTemperatura = "f";
+	}else{
+		tipoTemperatura = "c";
+	}
+}
 
 function getWeather(){
 	oneShotFunc();
 	var lat = user_latitude,
 		long = user_longitude,
-		codeResponse = null,
-		tempAtual = null;
+		codeResponse = null;
+	
 	$.get('http://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+long+'&APPID=d0f7ff959b61b2041decd8a55cc5ac5e',function(response){
 		try{
 			codeResponse = response.weather[0].icon;
-			tempAtual = response.main.temp;
-			tempAtual = +(Math.round((tempAtual - 273) + "e+0")  + "e-0");
+			temperaturaKevin = response.main.temp;
 			updateImage(codeResponse);
-			updateTemp(tempAtual);
 		}
 		catch(ignore){
-			
 		}	
 	});
 }
@@ -142,23 +145,47 @@ function onScreenStateChanged() {
 		getWeather();
 	}
 }
+function trocarHora(){
+	if( tipoHora == 24 ){
+		tipoHora = 12;
+	}
+	else{
+		tipoHora = 24;
+	}
+}
+
+function updateHour(hora){
+	if( tipoHora == 12 ){
+		ampm = "AM";
+		if (hora >= 12) {
+			hora = hora - 12;
+			ampm = "PM";
+		}
+		if (hora == 0) {
+			hora = 12;
+		}
+	}
+	if (hora < 10) {
+		hora = "0" + hora;
+    }
+	return hora;
+}
 
 function getTime() {
     var str_hours = document.getElementById('str_hours'),
         str_console = document.getElementById('str_console'),
         str_minutes = document.getElementById('str_minutes'),
         str_temp = document.getElementById('str_temp'),
+        str_ampm = document.getElementById('str_AMPM'),
         
         date = tizen.time.getCurrentDateTime();
 
-    str_hours.innerHTML = date.getHours();
+    str_hours.innerHTML = updateHour(date.getHours());
     str_minutes.innerHTML = date.getMinutes();
     //str_temp.innerHTML = 20 + "°C";
-    str_temp.innerHTML = temperaturaAtual + "°C";
+    str_temp.innerHTML = updateTemp(temperaturaKevin);
+    str_ampm.innerHTML = ampm;
     
-    if (date.getHours() < 10) {
-        str_hours.innerHTML = "0" + date.getHours();
-    }
     if (date.getMinutes() < 10) {
         str_minutes.innerHTML = "0" + date.getMinutes();
     }
@@ -172,6 +199,7 @@ function getTime() {
         str_console.style.visibility = 'hidden';
         flagConsole = true;
     }
+    
 }
 
 function initDigitalWatch() {
@@ -187,6 +215,14 @@ window.onload = function() {
     canvas.height = 360;
 	
     tizen.power.setScreenStateChangeListener(onScreenStateChanged);
+    $("#str_temp").click(function(){
+    	trocarTemp();
+    });
+    
+    $("#rec_time").click(function(){
+    	trocarHora();
+    	$('#str_AMPM').toggleClass("hide");
+    });
     document.addEventListener('tizenhwkey', function(e) {
         if (e.keyName === "back") {
             try {

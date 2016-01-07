@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns:tizen="http://tizen.org/ns/widgets" xmlns="http://www.w3.org/ns/widgets" id="http://yourdomain/WeatherFace" version="1.0.0" viewmodes="maximized">
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://yourdomain/WeatherFace" version="1.1.0" viewmodes="maximized">
     <access origin="http://api.openweathermap.org" subdomains="true"></access>
+    <access origin="*" subdomains="true"></access>
     <tizen:application id="BNzDTaQLly.WeatherFace" package="BNzDTaQLly" required_version="2.3.1"/>
-    <tizen:category name="com.samsung.wmanager.WATCH_CLOCK" />
+    <tizen:category name="com.samsung.wmanager.WATCH_CLOCK"/>
     <content src="index.html"/>
     <feature name="http://tizen.org/feature/screen.size.all"/>
     <icon src="icon.png"/>
     <name>WeatherFace</name>
     <tizen:privilege name="http://tizen.org/privilege/location"/>
     <tizen:privilege name="http://tizen.org/privilege/internet"/>
+    <tizen:privilege name="http://tizen.org/privilege/push"/>
+    <tizen:privilege name="http://tizen.org/privilege/download"/>
     <tizen:profile name="wearable"/>
     <tizen:setting background-support="disable" encryption="disable" hwkey-event="enable"/>
 </widget>
